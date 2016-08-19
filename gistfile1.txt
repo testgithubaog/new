@@ -1,0 +1,5 @@
+public interface DoubleTapListener<T extends ViewHolder> {
+
+    void onSingleTap(T viewHolder);
+
+}

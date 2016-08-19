@@ -1,0 +1,20 @@
+public abstract class ViewHolder<T> extends RecyclerView.ViewHolder {
+
+    private T item;
+
+    public ViewHolder(View itemView) {
+        super(itemView);
+    }
+
+    public void bind(T item) {
+        this.item = item;
+        bindViews(item);
+    }
+
+    public T getItem() {
+        return item;
+    }
+
+    protected abstract void bindViews(T item);
+
+}

@@ -1,0 +1,83 @@
+public abstract class BaseRecyclerViewAdapter<T, V extends ViewHolder<T>> extends RecyclerView.Adapter<V> {
+
+    private SingleTapListener singleTapListener;
+    private DoubleTapListener doubleTapListener;
+
+    private List<T> items;
+
+    public BaseRecyclerViewAdapter() {
+        items = new ArrayList<>();
+    }
+
+    public void add(T item) {
+        items.add(item);
+        int index = items.size() - 1;
+        notifyItemInserted(index);
+    }
+
+    public void remove(T item) {
+        int index = items.indexOf(item);
+        if (index >= 0) {
+            items.remove(index);
+            notifyItemRemoved(index);
+        }
+    }
+
+    public void updateItem(T item) {
+        int index = items.indexOf(item);
+        if (index >= 0) {
+            items.set(index, item);
+            notifyItemChanged(index);
+        }
+    }
+
+    @Override
+    public V onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(getViewResource(), parent, false);
+        V viewHolder = onCreateViewHolder(view);
+        putListeners(view, viewHolder);
+        return viewHolder;
+    }
+
+    @Override
+    public void onBindViewHolder(V holder, int position) {
+        T item = items.get(position);
+        holder.bind(item);
+    }
+
+    @Override
+    public int getItemCount() {
+        return items.size();
+    }
+
+    public void setSingleTapListener(SingleTapListener singleTapListener) {
+        this.singleTapListener = singleTapListener;
+    }
+
+    public void setDoubleTapListener(DoubleTapListener doubleTapListener) {
+        this.doubleTapListener = doubleTapListener;
+    }
+
+    protected abstract V onCreateViewHolder(View view);
+
+    protected abstract int getViewResource();
+
+    private void putListeners(View view, final ViewHolder viewHolder) {
+        view.setOnTouchListener(new TapListener(view.getContext()) {
+            @Override
+            protected void onSingleTap() {
+                if (singleTapListener != null) {
+                    singleTapListener.onSingleTap(viewHolder);
+                }
+            }
+
+            @Override
+            protected void onDoubleTap() {
+                if (doubleTapListener != null) {
+                    doubleTapListener.onDoubleTap(viewHolder);
+                }
+            }
+        });
+    }
+}
+
